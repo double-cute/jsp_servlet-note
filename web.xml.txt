@@ -1,0 +1,14 @@
+1. <web-app metadata-complete="true"  : Servlet3.0之后新增了Annotation配置Web组件，如果为true表示忽略Annotation的配置
+
+
+2.配置首页：
+  
+<welcome-file-list>
+	<welcome-file>index.html</welcome-file>
+	<welcome-file>index.htm</welcome-file>
+	<welcome-file>index.jsp</welcome-file>
+</welcome-file-list>
+表示该应用的Web首页依次是这三个文件，如果index.html不存在在用index.htm充当，依次类推
+
+
+3.
