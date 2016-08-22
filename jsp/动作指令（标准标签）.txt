@@ -1,0 +1,24 @@
+1.标准标签：
+ 
+  a.也称为动作指令：<jsp:指令名 属性...>
+！！之所以称为动作，是因为这些标签背后其实都是一段段JSP脚本，因此是一种运行时命令
+
+  b.7大动作命令：forward（跳转）、param（传参）、include（动态引入另一个JSP页面）、plugin（下载JavaBean）、setProperty、getProperty（设置和获取JavaBean的属性值）
+
+
+2.jsp:forward
+
+  a.用法：
+<jsp:forward page="forward.jsp">
+    <jsp:param name="age" value="29"/>
+    <jsp:param name="name" value="Peter"/>
+    ...
+</jsp:forward>
+
+  b.作用就是将请求转发给另一个JSP页面来处理，并且可以传递额外的参数，而之前的参数都将保留，不会丢失
+
+  c.在另一个页面中可以通过request内置对象的getParameter方法获取参数值：<%=request.getParameter("age")%>
+
+  d.即使请求发生转发了，浏览器地址栏的地址仍然是转发前的地址，即跳转动作是对外隐藏的！
+
+  e.该指令其实并不是真正意义上的请求转发，它并没有向新页面重新发送请求，只是采用了一个新页面来对用户生成响应，请求依然是一次请求，因此请求参数、属性等都不会丢失！

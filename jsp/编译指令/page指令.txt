@@ -1,0 +1,24 @@
+1.page指令的属性：
+
+language：JSP脚本语言的种类，默认为"Java"，无需改动
+
+extends:由JSP生成的Servlet要继承的父类，无需改动
+
+import:导入的包，默认自动导入java.lang.*、javax.servlet.*、javax.servlet.jsp.*、javax.servlet.http.*
+
+session:true|false，表示该页面是否需要session
+
+buffer:是JSP对客户端输出的缓冲区的大小，默认为8KB，也可以设置为none（表示不缓冲，即写一条输出一条，但这样效率很低），可以手动设置XKB
+
+autoFlush:true|false，如果当缓冲区满时是否要强制输出缓冲区内容，默认为true，为false时如果满则会抛出异常
+
+errorPage:设置当前页面的错误处理页面，一旦发生错误则会跳到指定的错误处理页面，例如errorPage="handle.jsp"
+
+isErrorPage：true|false，该页面是否为错误处理页面，设置了该属性就不用设置errorPage了
+
+contentType:设定网页的文件格式（MIME）和编码，contentType="mime; charset=xxx"，默认值为contentType="text/html; charset=ISO-8859-1"
+
+pageEncoding:页面编码，和contentType中的编码重复，可以在contentType中不写，但在pageEncoding中写
+
+info：用来表述当前JSP作用的描述信息，可以通过Servlet.getServletInfo()方法获取该信息，例如：info="this is a JSP"，然后通过<%=getServletInfo()%>输出
+
