@@ -1,0 +1,15 @@
+1.声明Java变量和方法：
+
+  a.<%! 声明内容 %>
+
+  b.例如：
+<%!
+public int count;
+public String info() { return "hello"; }
+%>
+
+  c.所有声明的变量和方法都是生成的Servlet类的成员，可以用任意public、private、protected修饰，也可以用static修饰
+！但是不能用abstract修饰，因为这样修饰会导致Servlet类为抽象类，抽象类不能实例化，这将导致Servlet类不可用！
+
+  d.由于JSP生成的Servlet和普通Servlet一样，实例化只会发生一次，因此其成员变量会被多个用户共享（多个用户都请求该Servlet服务不会产生多个Servlet，只有一个）
+！例如，声明一个count变量，每次访问该页面都会+1，那么多个用户同时访问时该count的值是连续变化的

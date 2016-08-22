@@ -1,0 +1,10 @@
+Web应用根目录
+    WEB-INF
+        classes
+        lib
+        web.xml
+    .jsp
+
+
+WEB-INF中的内容不能由外部访问，里面都是Web应用的组件
+		
