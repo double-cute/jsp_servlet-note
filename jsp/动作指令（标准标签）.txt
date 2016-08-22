@@ -22,3 +22,43 @@
   d.即使请求发生转发了，浏览器地址栏的地址仍然是转发前的地址，即跳转动作是对外隐藏的！
 
   e.该指令其实并不是真正意义上的请求转发，它并没有向新页面重新发送请求，只是采用了一个新页面来对用户生成响应，请求依然是一次请求，因此请求参数、属性等都不会丢失！
+
+
+3.jsp:include
+
+  a.用法：
+<jsp:forward page="forward.jsp">
+    <jsp:param name="age" value="29"/>
+    <jsp:param name="name" value="Peter"/>
+    ...
+</jsp:forward>
+！用法可以看到和jsp:forward一模一样，因此重要的是和forward的区别
+
+  b.和forward的区别：
+    i.jsp:forward调用的是Servlet的forward方法，而jsp:include调用的是Servlet的include方法
+    ii.forward的方法会把控制权全权交给新页面，同时也把输出流交给新页面，一次jsp:forward后的页面输出语句无效
+    iii.而include方法只是将新页面的body部分放在本地执行（调用include处），输出流的权利还是留在当前jsp页面中，因此返回后接下来的当前jsp页面的输出仍然有效
+    iv.但是forward和include都属于等待式执行，都必须要等待另一个jsp执行完毕后才能继续执行接下来的语句
+
+  c.注意jsp:include和@include的区别：
+    i.jsp:include的是动态包含（include处是一个jsp入口地址），并且只包含body里的执行体，而后者完全就是内容的复制粘贴，也会把编译指令复制进来
+    ii.jsp:include进来的页面编译指令跟随当前页面的，新页面的编译指令无效！
+
+
+4.jsp:useBean、setProperty、getProperty：
+ 
+  a.这三个指令都用来操作JavaBean
+
+  b.jsp:useBean：
+    i.用法：<jsp:useBean id="p1" class="com.lirx.Person" scope="page | request | session | application 4选1"/>
+    ii.其等价于JSP脚本：
+com.lirx.Person p1 = new com.lirx.Person();   #初始化一个JavaBean实例p1，id就是对象名称
+pageContext | request | session | application.setAttribute("p1", p1);   #确定该JavaBean的作用范围
+
+  c.jsp:setProperty：
+    i.用法：<jsp:setProperty name="p1" property="name" value="Peter"/>
+    ii.其等价于JSP脚本（调用JavaBean的setter）：p1.setName("Peter");
+
+  d.jsp:getProperty：
+    i.用法：<jsp:getProperty name="p1" property="name"/>
+    ii.等价脚本：<%=p1.getName()%>

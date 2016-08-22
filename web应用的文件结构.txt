@@ -1,5 +1,6 @@
 Web应用根目录
     WEB-INF
+        src
         classes
         lib
         web.xml
