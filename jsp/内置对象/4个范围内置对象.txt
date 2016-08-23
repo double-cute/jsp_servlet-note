@@ -1,0 +1,116 @@
+1.4个表示范围的内置对象：
+
+  a.分别是application、session、request、pageContext
+
+  b.它们4个的本质其实就是4个Map对象（实则应该当成Properties对象处理），里面存放了各种键值（只不过里面的1个键可以对应多个值）
+
+  c.既然是Map对象，那么这4个内置对象其实就是用来传递数据的
+
+  d.它们4个的区别就是作用域（作用范围）不同，分别代表整个应用、一次会话、一次请求、当前JSP页面
+
+
+2.application：简单用法
+ 
+  a.作用范围是整个Web应用程序，整个应用程序中所有的Servlet和JSP相互之间都能共享（访问到）application中的数据
+
+  b.application实质上就是Servlet中的ServletContext对象，常用方法：
+    i.void setAttribute(String attrName, Object value);
+    ii.Object getAttribute(String attrName);
+
+  c.JSP中操作application：
+<% application.setAttribute("counter", String.valueOf(++i)); %>
+<%=application.getAttribute("counter")%>
+
+  d.Servlet中操作application：
+ServletContext sc = getServletConfig().getServletContext();  #需要先获取ServletContext对象
+sc.setAttribute(...
+sc.getAttribute(...
+
+
+3.application的Web应用配置：
+
+  a.application还有一个重要的作用就是存放着整个Web应用的配置，这些配置还是以键值的形式保存
+
+  b.这些配置对整个Web应用中的所有Servlet和JSP都有效，在任何Servlet/JSP中都可以访问这些配置参数
+
+  c.Web配置参数一般写在web.xml部署文件中，在Web应用初始化时Web容器会读取它们，因此这些参数也称为Web应用初始化参数，在web.xml中的格式：
+    i.在<web-app>标签下
+    ii.格式：
+<context-param>
+    <param-name>user_name</param-name>
+    <param-value>Peter</param-value>
+</context-param>
+<context-param>
+    <param-name>passwd</param-name>
+    <param-value>1234</param-value>
+</context-param>
+...
+
+  d.读取：String application.getInitParameter(String paramName);
+
+
+4.pageContext：
+
+  a.作用范围是当前页面，但是其主要的功能是当前JSP/Servlet对外的接口，页面本身可以通过pageContext这个对外接口访问外部内容
+！说白了它的作用就是保存当前页面数据的同时也可以作为访问外部世界的接口
+
+  b.其本质是PageContext类型对象
+
+  c.访问和设置所有范围内（application、session、page、request）的数据：
+    i.Object getAttribute(String attrName[, int scope]);
+    ii.void setAttribute(String attrName, Objecte value[, int scope]);
+    iii.scope省略则默认为是page作用域
+    iv.scope必须是以下枚举量：
+PageContext.PAGE_SCOPE
+PageContext.REQUEST_SCOPE
+PageContext.SESSION_SCOPE
+PageContext.APPLICATION_SCOPE
+
+  d.测试某个属性位于哪个范围内：int getAttributesScope(String name);  //返回值就是那4个枚举量
+
+
+5.request：header和请求参数
+
+  a.request封装这用户的一次请求，因此其作用范围就是那次请求，只要请求不删除，那么该请求中的数据可以被任意Servlet/JSP访问到
+
+  b.header：
+    i.即请求头，一般是由浏览器自动生成，里面包含了一些C/S通信协议内容，也是以键值的形式存放
+    ii.通过request获取header中的信息：
+String getHeader(String name);  // 获取一个键值
+int getIntHeader(String name);  // 获取一个键值，但前提是你已经知道该值是一个int型值可以无异常地parse
+Enumeration<String> getHeaders(String name);  // 一个键对应多个值
+Enumeration<String> getHeaderNames();  // 获取所有键名
+
+  c.请求参数：
+    i.有两种存放形式：GET方式将请求参数放在URL末尾，POST方式将请求参数放在header体中，后者内容大小无限制（前者最多2KB）
+！并且POST更加安全，不会将敏感信息暴露在URL地址栏
+    ii.利用request获取请求参数（GET和POST都适用）：
+String getParameter(String paramName);   // 一键一值
+String[] getParameterValues(String paramName);  // 一键多值
+Map getParameterMap();  // 获取所有参数键值所组成的Map
+Enumeration<String> getParameterNames(); // 获取所有参数名
+
+  d.GET、POST方式下处理请求参数的区别：处理非西欧字符的转码
+    i.由于方法一模一样，因此看上去没区别，但唯一的区别是在编码上，如果请求参数中包含了非西欧字符，那么两者的处理方式上就有所不同了
+    ii.POST下：request.setCharacterEncoding刚好就是对header体进行编码设置的，因此获取POST参数之前只要调用该方法转码即可，非常方便
+void setCharacterEncoding(String env);  // 一定要在getParameter之前调用该方法转码！
+    iii.GET下：由于Servlet API并没有直接提供对URL进行转码的方法，因此需要使用J2SE的传统方法进行转码了
+byte[] byte_stream = request.getParameter("name").getBytes("源编码");
+String name = new String(byte_stream, "目标编码");
+！！即需要先转换成二进制流这个中间体才行
+
+
+6.request设置范围属性：
+
+  a.request除了可以操作header和请求参数外别忘了它也是一个普通的Map对象，也可以存放共享数据
+
+  b.它作为Map存放共享数据的作用范围当然是本次请求了
+
+  c.方法：setAttribute和getAttribute，和application的完全一样
+
+  d.当request被forward等请求转发后，其中的attribute范围属性不会失效，也会被一直传递下去
+
+
+7.session：
+
+  a.
