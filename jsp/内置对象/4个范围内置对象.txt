@@ -84,6 +84,8 @@ Enumeration<String> getHeaderNames();  // 获取所有键名
   c.请求参数：
     i.有两种存放形式：GET方式将请求参数放在URL末尾，POST方式将请求参数放在header体中，后者内容大小无限制（前者最多2KB）
 ！并且POST更加安全，不会将敏感信息暴露在URL地址栏
+！！注意：POST时，必须是拥有name属性的参数才会产生请求参数！！没有name属性的不会产生请求参数哦！
+！同样，如果表单域设置了disabled="disabled"则表示该表单域不再产生请求参数
     ii.利用request获取请求参数（GET和POST都适用）：
 String getParameter(String paramName);   // 一键一值
 String[] getParameterValues(String paramName);  // 一键多值
@@ -125,3 +127,5 @@ String name = new String(byte_stream, "目标编码");
     iv.下次该客户端请求时，就会凭Cookie中的session ID让服务器从磁盘中取出该session，而session中保存中历史通讯记录，此时就可以取出加以利用了
 
   d.方法：还是getAttribute、setAttribute这两个
+
+  e.session的持续时间：从浏览器连接服务器开始到浏览器与服务器断开为止，即一次会话的持续时间

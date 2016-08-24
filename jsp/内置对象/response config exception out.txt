@@ -1,0 +1,13 @@
+1.reponse:
+  
+  a.代表对客户端的响应，通常out对象可以完成对客户端的输出，但是out是Writer对象，即字符流，如果需要输出二进制流（图片、PDF等）还是需要借助于response
+
+  b.其本质是HttpServletResponse对象
+
+  c.获取响应字节流：ServletOutputStream getOutputStream();
+
+  d.重定向：void sendRedirect(String location);   // 例如，response.sendRedirect("redirect.jsp");
+    i.将请求重定向到另一个页面
+    ii.和forward的区别是，重定向将产生一个新的请求，前一个请求会丢失，并且浏览器地址栏的地址也会变成新页面的地址！！
+
+  e.
