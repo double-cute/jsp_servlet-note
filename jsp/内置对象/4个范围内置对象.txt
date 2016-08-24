@@ -113,4 +113,15 @@ String name = new String(byte_stream, "目标编码");
 
 7.session：
 
-  a.
+  a.用于持久性存储一个客户端和服务器之间的会话内容：服务器可以用session保存和一个特定客户端之间的通信数据，并可以持久保存在服务器硬盘中
+！由于HTTP是无状态协议，客户下一次请求服务器时服务器不会知道他之前请求过，因此为了达到让服务器“记住”该客户之前交流的数据的话就必须使用特殊方法session了
+
+  b.session其实就是HttpSession对象
+
+  c.session的底层原理：
+    i.session其实就是一个Map对象，可以存储和特定客户端通信的内容
+    ii.每个session都有一个唯一的session ID，服务器响应时就将该ID放入Cookie中回给客户端
+    iii.同时服务器会将该session对象存入服务器磁盘中持久保存（因此session中存放的数据，特别是Java对象，必须是可序列化的！否则会抛出异常）
+    iv.下次该客户端请求时，就会凭Cookie中的session ID让服务器从磁盘中取出该session，而session中保存中历史通讯记录，此时就可以取出加以利用了
+
+  d.方法：还是getAttribute、setAttribute这两个
