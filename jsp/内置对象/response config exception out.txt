@@ -10,4 +10,23 @@
     i.将请求重定向到另一个页面
     ii.和forward的区别是，重定向将产生一个新的请求，前一个请求会丢失，并且浏览器地址栏的地址也会变成新页面的地址！！
 
-  e.
+  e.Cookie：
+    i.session将通信记录保存在服务器端，而Cookie则保存在客户端浏览器中
+    ii.Cookie通过response设置，即服务器产生Cookie给浏览器，浏览器下次请求会把Cookie在发给服务器加以利用（通常保存登陆信息、密码等方便用户快速登陆等）
+    iii.Cookie使用流程：
+
+服务器端第一次产生Cookie给浏览器：
+Cookie c_name = new Cookie("name", "Peter");  #一个Cookie只能保存一对键值，并且值只能是String类型的
+Cookie c_passwd = new Cookie("passwd", "123");
+c.setMaxAge(24 * 3600);  #必须设置Cookie的生存时长（这里是24小时），单位是秒，如果不设置，则默认浏览器断开连接就销毁（和session一样了）
+response.addCookie(c_name);  #最后加入到response中即可，会自动发送给浏览器的
+response.addCookie(c_passwd);
+
+下次浏览器请求时可以从request中取出Cookie：
+Cookie[] cookies = request.getCookies();
+for (Cookie c: cookies) {
+    ... c.getName() ...
+    ... c.getValue() ...
+}
+
+！！Cookie不允许出现非西欧字符，如果要强行使用，则必须使用URLEncoder和URLDecoder进行编解码
