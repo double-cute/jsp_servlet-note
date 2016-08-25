@@ -1,0 +1,49 @@
+1.加入动态标签体：
+
+  a.自定义标签要么采用静态标签体要么采用动态标签体，两者水火不容，只能二选一，因为标签处理类的JspFragment jspBody只能接受静态内容
+！即getJspBody.invoke(null);只能输出静态标签体
+！！接下来介绍如何加入动态标签体
+
+  b.既然JspFragment类对象就是用来执行并输出代码片段的，而处理了自己的jspBody规定只能接受静态内容，那么就只能自己手动添加一个JspFragment数据域来接受动态内容咯！
+    i.需要自己手动为标签处理类添加一个属性域：private JspFragment fragment;并准备好getter和setter
+    ii.该数据域就用来单独接受动态标签体
+    iii.然后再doTag中调用fragment.invoke(null);执行并输出动态JSP代码片段即可，和getJspBody().invoke(null)一模一样，null都表示使用默认的getJspContext().getOut()进行输出
+
+  c.接着就是tld文件了：
+    i.静态动态水火不容，因此<body-content>不能为scriptless，但是动态标签体是通过属性域接受的，因此实际上并没有标签体（通过属性传递），因此<body-content>为empty！
+    ii.别忘了添加fragment的<attribute>，注意<attribute>的<fragment>子标签的值必须为true，即启用JSP代码片段的功能
+
+  d.使用标签：
+    i.由于动态内容是通过属性域fragment传入处理类的（并且body-content为empty），因此实际上不能有标签体
+    ii.那么我们的包含动态JSP内容的“标签体”只能通过标签属性传入了！
+    iii.但是fragment属性并不是String类型的，因此不能通过<mytag:test fragment="<mytag:hello/>"...传入，它是JspFragment类型的
+    iv.因此需要通过<jsp:attribute>标签传入属性值，该标签专门用于传入非String类型的属性值
+    v.示例：
+<mytag:test>
+    <jsp:attribute name="fragment">   #假设tld中<tag>的<name>为test，<attribute>的<name>为"fragment"
+        <mytag:hello/>    #动态内容，即底层是Java代码
+    </jsp:attribute>
+</mytag:test>
+
+
+2.完整的示例：
+
+标签处理类：TagFragmentTest
+private JspFragment fragment;  以及getter和setter
+doTag:fragment.invoke(null);  //执行并输出
+
+tld：
+<tag>
+    <name>test</name>
+    <body-content>empty</body-content>
+    <attribute>
+        <name>fragment</name>
+        <fragment>true</fragment>
+
+
+jsp:
+<mytag:test>
+    <jsp:attribute name="fragment">
+        <mytag:hello/>
+    </jsp:attribute>
+</mytag:test>

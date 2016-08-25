@@ -1,0 +1,45 @@
+1.标签体：
+ 
+  a.标签体就是自定义标签中间的内容：
+<mytag:hello>
+   标签体
+</mytag:hello>
+
+  b.自定义标签允许有标签体，标签处理类中可以通过API获取标签体并加以利用
+
+  c.标签体分为两种：
+    i.静态标签体：标签体可以是静态HTML内容或者表达式，但不可以是动态的JSP代码
+    ii.动态标签体：可以是动态的JSP代码片段（即底层是Java代码）
+
+
+2.加入静态标签体：
+
+  a.在标签处理类中利用标签体：getJspBody()方法获取JspFragment对象，调用JspFragment的invoke方法输出标签体的内容
+    i.JspFragment getJspBody();  #返回的JspFragment就是标签体中的代码片段
+    ii.void JspFragment.invoke(Writer out);
+#如果fragment片段中包含的是可执行的JSP代码，那么就先执行代码
+#最后将JSP代码执行过程中的所有输出以及片段中所有的非JSP代码（即普通的HTML输出）统统加入到out中输出
+#如果out参数为null则默认用标签处理类自己的JspOut对象输出
+
+  b.一般在处理类的doTag中这样调用：getJspBody().invoke(null);  //直接输出标签体
+#由于是静态标签，因此body中不可能会有动态JSP代码，因此可以放心调用
+
+  c.tld文件中<tag>的<body-content>就表示标签体的内容是什么形式的，静态标签体应该写scriptless，即表示非JSP代码，即静态内容（静态HTML以及表达式）
+！示例：<body-content>scriptless</body-content>
+！！这就可以理解之前empty了，就表示标签体为空
+
+！！一旦使用标签的时候标签体中内容的类型和<body-content>设定的不一致就会直接报错！
+
+  d.最后就是正常使用标签了，可以加入标签体，但注意，必须是静态内容：
+<mytag:hello name="Peter>
+    <tr>
+        <td>${pageScope.item}</td>
+    <tr>
+</mytag:hello>
+
+##不能使用动态标签体！下面是错误的，和<body-content>定义的类型不符
+<mytag:hello name="Peter>
+    <tr>
+        <td><mytag:show/></td>   #里面使用了一个JSP标签，属于动态内容（即底层调用了Java代码）
+    <tr>
+</mytag:hello>
