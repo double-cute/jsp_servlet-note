@@ -30,3 +30,49 @@ for (Cookie c: cookies) {
 }
 
 ！！Cookie不允许出现非西欧字符，如果要强行使用，则必须使用URLEncoder和URLDecoder进行编解码
+
+
+2.config:
+
+  a.是JSP页面的配置信息，即ServletConfig对象，config对象通常在JSP页面中使用较少，JSP页面通常不需要怎么配置
+
+  b.如果需要配置JSP页面，则需要在web.xml中配置，并且要把JSP页面当成普通Servlet进行配置：
+<servlet>
+    <servlet-name>config</servlet-name>     #可以看到JSP页面当做Servlet进行配置
+    <jsp-file>/configTest.jsp</jsp-file>    #和配置普通Servlet唯一不同的就是不是再指定.class文件了，而是指定jsp文件的路径（相对于应用程序环境根目录的）
+
+    <init-param>                            #init-param就是ServletConfig的配置参数，也称为config初始参数，初始化一个Servlet时会读取到config对象中
+        <param-name>name</param-name>
+        <param-value>Peter</param-value>
+    </init-param>
+    <init-param>
+        <param-name>age</param-name>
+        <param-value>17</param-value>
+    </init-param>
+    ...
+</servlet>
+
+<servlet-mapping>                           #映射模式别忘了，因为就是在部署普通的Servlet
+    <servlet-name>config</servlet-name>
+    <url-pattern>/config</url-pattern>
+</servlet-mapping>
+
+  c.通过config获取JSP配置参数：String getInitParameter(String paramName);
+！！注意：如果想通过该方法获取配置参数，则浏览器的URL地址必须使用JSP的web.xml配置路径来访问，即/config而不能是/configTest.jsp
+！！否则getInitParameter得到的参数值都将是null
+
+
+3.exception：
+
+  a.该对象只在异常处理页面中有效（@page isErrorPage="true"），表示其它页面抛出的异常
+
+  b.常用方法：
+    i.Class<?> getClass();   // 返回异常的Java类型
+    ii.String getMessage();  // 返回具体的异常描述信息
+
+
+4.out：
+
+  a.即页面输出流，所有JSP画面显示其实都是out.write方法在输出
+
+  b.当然，如果出现write解决不了的问题，则可以使用out更加丰富的输出功能，例如out.println、out.printf等等

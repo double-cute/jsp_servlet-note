@@ -1,0 +1,25 @@
+1.Servlet作为控制器使用：
+
+  a.在MVC变成思想下，JSP是表现层技术，应该只用来显示画面和美工，不能包含控制逻辑和业务逻辑
+
+  b.同时业务逻辑应该交由JavaBean来处理（包括数据库访问等等），而Servlet应该转为专业的控制器
+
+  c.控制器（Controller）的工作：
+    i.接受并解析用户请求
+    ii.更具请求内容分析应该将本次请求交给谁来处理
+    iii.即应该是调派给业务逻辑处理数据呢？还是直接调用某个JSP给用户返回一个页面？
+    iv.即控制器的工作是分析请求并发派任务，最后将结果返回
+
+  d.控制器应该专门由Servlet实现，Servlet在MVC不能作为表现层技术
+
+
+2.Servlet作为控制器的核心功能：
+
+  a.当然就是请求调派了，其实就是JSP中的<jsp:include>和<jsp:forward>两个功能，来调派由谁来相应用户的请求
+
+  b.请求调派的过程：
+RequestDispatcher rd = request.getRequestDispatcher("/welcome.jsp");   //获取一个调派器，指定调派的目的地（即由谁来完成该响应）
+request.setAttribute("extra_info", obj_data);  //正式调派之前再加一些额外的参数（如果有必要的话）
+rd.forward(request, response); 或者 rd.include(request, response);  //正式调派出去
+！！注意：为调派器指定目的地的URL模式必须以/开头！
+！可见Servlet的请求调派比JSP麻烦很多，JSP就是一个标签就搞定的！

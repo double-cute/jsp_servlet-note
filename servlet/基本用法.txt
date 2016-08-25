@@ -1,0 +1,26 @@
+1.需要实现的方法：
+
+  a.一般根据客户端的请求，选择性实现doGet或者doPost即可
+
+  b.但如果想用一个统一的方法来实现doGet、doPost等多种响应则直接实现一个service方法即可
+
+  c.如果想自定义Servlet的初始化，则应该自己覆盖init(ServletConfig config)方法
+    i.但为了读取web.xml中的Servlet配置参数（初始化参数，也是JSP中的config配置参数）必须在该方法开头处调用super.init(config)
+    ii.其父类的init(config)的作用就是读取web.xml中的Servlet config配置参数（即init-param）
+
+  d.destroy()方法会在Servlet销毁前调用，一般不需覆盖，因为有关Servlet的资源的创建销毁等工作都是由Web容器自动管理的，除非是一些诸如数据库连接资源等需要用户手动释放，则应该放在destroy方法中进行
+
+  e.无需实现Servlet的构造器，所有初始化应该放在init方法中完成，而销毁工作则应该放在destroy中进行
+
+
+2.Servlet生命周期：完全由Web容器控制
+
+  a.创建Servlet实例
+
+  b.init初始化并读取Servlet配置参数（config配置参数）
+
+  c.存在于Web容器中相应客户端请求
+
+  d.destroy手动回收特殊资源
+
+  e.撤掉销毁并撤走内存空间

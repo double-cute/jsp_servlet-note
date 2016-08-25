@@ -1,0 +1,46 @@
+1.Annotation和web.xml：
+
+  a.两者冲突，则其一对Servlet进行配置，同时使用会发生异常
+
+  b.因为两者的目的不同，web.xml是对整个应用中的所有Servlet/JSP进行部署（统一部署），而Annotation是对单个Servlet进行配置
+
+  c.使用Annotation最大的好处就是可以简化web.xml中的内容，一般Annotation用在小型项目中，每个Servlet可以单独管理，一般大型项目还是使用web.xml统一部署更加合理
+
+  d.Annotation的最大缺陷：Servlet配置参数的值直接出现在.java源文件中，属于硬编码（重度耦合），修改配置必须要直接修改源码，这点特别不好
+！因此，一般使用Annotation配置的参数都是一些几乎永远都不会修改的参数
+
+  c.格式：
+    i.Annotation的格式（写在Servlet的类定义前，最后无分号，多个配置参数之间用逗号隔开！）：@WebServlet(配置参数)
+    ii.web.xml格式：在servlet、servlet-mapping这两个标签下
+
+  d.要使用Annotation功能就不要在web.xml中写<web-app metadata-complete="true"...>，该属性设为true会关闭Annotation的功能
+
+
+2.常用配置参数：先web.xml后Annotation
+
+  a.Servlet标识名（Web容器对其的唯一辨识）：<servlet>下
+<servlet-name>FirstServlet</servlet-name>
+name="FirstServlet"
+
+  b.映射模式：<servlet-mapping>下
+<url-pattern>a.view</url-pattern>
+urlPatterns={"a.view"} 或者 value={"a.view"}  urlPatterns和value等价
+
+  c.启动模式：<servlet>下，如果没有该属性则表示该Servlet只有当用户第一次请求是启动（实例化），否则就在Web服务器启动时就立即启动
+<load-on-startup>1</load-on-startup>
+loadOnStartup=1
+！该属性值是一个数字，越小表示启动优先级越高（因为Web服务器中可能有多个Servlet，该属性为数字都表示服务器启动时启动，那大家就有一个先后顺序的问题了，数字越小优先级越高）
+
+  d.配置参数：<servlet>下，即JSP的config配置参数，即Servlet的配置参数（初始化参数，init-param）
+<init-param>
+    <param-name>driver</param-name>
+    <param-value>com.mysql.jdbc.Driver</param-value>
+</init-param>
+...
+
+initParam={
+    @WebInitParam(name="driver", value="com.mysql.jdbc.Driver"),
+    @WebInitParam(name="url", value="....")
+}
+
+！！获取配置参数，JSP中直接config.getInitParameter即可，Servlet中需要先ServletConfig config = getServletConfig();后再调用getInitParameter

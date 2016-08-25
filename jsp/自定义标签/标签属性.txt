@@ -1,0 +1,36 @@
+1.设置标签属性：
+
+  a.像我们常用的HTML标签等都具有标签属性，例如：<body bgcolor="#fffc0">等，因此，自定义标签必须也支持标签属性
+
+  b.属性可以理解为标签处理类的数据域，因此必须为每个属性域提供getter和setter，其实带有属性的标签的标签处理类就是个JavaBean
+！JavaBean中的数据域就是标签的属性，因此也称为属性域
+
+  c.标签属性的名称是以getter和setter的名称为准的，例如：private String user_name; public String getName() { return user_name; }
+！！那么该标签的属性名是name，而不是user_name，属性名是由getter和setter的名称来定的！不是数据域的名称！
+
+  d.接着需要在tld文件中声明标签所具有的属性：在<tag>标签下，<attribute>标签，有几个属性就有几个<attribute>标签
+
+<tag>
+    ...
+    <attribute>  #属性域
+        <name>driver</name>  #属性名，必须和getter和setter相对应，意味着getDriver()和setDriver()
+        <required>true</required>   #该标签是否为必须的，即使用该标签是是否一定必须要给出该属性的值
+        <fragment>true</fragment>   #该标签是否支持JSP脚本、表达式等动态内容
+    </attribute>
+    <attribute>
+        <name>url</name>
+        <required>true</required>
+        <fragment>true</fragment>
+    </attribute>
+    <attribute>
+        <name>url</name>
+        <required>true</required>
+        <fragment>true</fragment>
+    </attribute>
+    ...
+</tag>
+
+  e.最后自然是使用标签了，标签库声明<%@ taglib...部分还是不变，仅仅就是使用标签是加上属性即可：
+<mytag:hello
+    driver="com.mysql.jdbc.Driver"
+    url="jdbc:mysql://localhost:3306/javaee"/>
