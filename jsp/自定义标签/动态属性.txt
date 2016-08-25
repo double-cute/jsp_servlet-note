@@ -1,0 +1,29 @@
+1.动态属性：
+
+  a.就是标签的属性不是一开始就确定好的，而是在使用标签的时候随意取的，并且数量也是未知的
+
+  b.实现动态属性就两点：
+    i.标签处理类必须实现DynamicAttributes接口
+    ii.tld中<tag>的<dynamic-attributes>子标签必须为true
+
+  c.DynamicAttributes接口：
+    i.函数式接口，其唯一方法就是：public void setDynamicAttribute(String uri, String localName, Object value);
+    ii.其中uri是标签库的uri，不用管，一般用不到
+    iii.localName-value就是属性键值对，在该方法中应该要保存该键值对，以便可以在doTag中利用
+    iv.该方法是迭代地处理标签的每个属性
+
+
+2.示例：
+
+处理类：TagDynamicAttrTest extends SimpleTagSupport implements DynamicAttributes
+private ArrayList<String> keys;  //保存属性键值对
+private ArrayList<Object> values;
+setDynamicAttribute: keys.add(localName); values.add(value);  //必须要保存属性
+doTag:foreach(print keys[i], values[i])   // doTag中加以利用
+
+tld:
+<tag>
+    <dynamic-attributes>true</dynamic-attributes>
+
+jsp:
+<mytag:dynatest 书名="新华字典" name="Peter" 价格="1.5元"...>  #属性名、属性个数随意
